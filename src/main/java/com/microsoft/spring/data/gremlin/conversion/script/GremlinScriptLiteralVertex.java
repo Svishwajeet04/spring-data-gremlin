@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.script;
 
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
@@ -35,7 +36,12 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                                            // g
         scriptList.add(generateAddEntityWithLabel(source.getLabel(), VERTEX));              // addV('label')
 
-        source.getId().ifPresent(id -> scriptList.add(generatePropertyWithRequiredId(id))); // property(id, xxx)
+        // Only set ID property if the ID field is NOT marked with @GeneratedValue
+        source.getId().ifPresent(id -> {
+            if (!source.getIdField().isAnnotationPresent(GeneratedValue.class)) {
+                scriptList.add(generatePropertyWithRequiredId(id)); // property(id, xxx)
+            }
+        });
 
         scriptList.addAll(generateProperties(source.getProperties()));
 

@@ -14,7 +14,23 @@ public class GremlinQuery {
     @Getter
     private final Criteria criteria;
 
-    public GremlinQuery(@NonNull Criteria criteria) {
+    @Getter
+    private final String rawQuery;
+
+    private GremlinQuery(Criteria criteria, String rawQuery) {
         this.criteria = criteria;
+        this.rawQuery = rawQuery;
+    }
+
+    public GremlinQuery(@NonNull Criteria criteria) {
+        this(criteria, null);
+    }
+
+    public static GremlinQuery raw(@NonNull String rawQuery) {
+        return new GremlinQuery(null, rawQuery);
+    }
+
+    public boolean isRaw() {
+        return this.rawQuery != null;
     }
 }

@@ -9,7 +9,8 @@ import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationEx
 import com.microsoft.spring.data.gremlin.telemetry.TelemetrySender;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
-import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
+import org.apache.tinkerpop.gremlin.util.ser.GraphBinaryMessageSerializerV1;
+import org.apache.tinkerpop.gremlin.util.ser.Serializers;
 import org.springframework.lang.NonNull;
 
 import javax.annotation.PostConstruct;
@@ -34,17 +35,29 @@ public class GremlinFactory {
         this.gremlinConfig = gremlinConfig;
     }
 
-    private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
+    private Cluster createGremlinCluster() {
         final Cluster cluster;
 
         try {
-            cluster = Cluster.build(this.gremlinConfig.getEndpoint())
-                    .serializer(Serializers.valueOf(this.gremlinConfig.getSerializer()).simpleInstance())
+            Cluster.Builder builder = Cluster.build(this.gremlinConfig.getEndpoint())
                     .credentials(this.gremlinConfig.getUsername(), this.gremlinConfig.getPassword())
                     .enableSsl(this.gremlinConfig.isSslEnabled())
                     .maxContentLength(this.gremlinConfig.getMaxContentLength())
-                    .port(this.gremlinConfig.getPort())
-                    .create();
+                    .port(this.gremlinConfig.getPort());
+            
+            // Use custom TypeSerializerRegistry if provided, otherwise use default serializer
+            if (this.gremlinConfig.getTypeSerializerRegistry() != null && 
+                Serializers.GRAPHBINARY_V1.toString().equals(this.gremlinConfig.getSerializer())) {
+                // Create custom GraphBinary serializer with the provided TypeSerializerRegistry
+                GraphBinaryMessageSerializerV1 customSerializer = 
+                    new GraphBinaryMessageSerializerV1(this.gremlinConfig.getTypeSerializerRegistry());
+                builder.serializer(customSerializer);
+            } else {
+                // Use default serializer
+                builder.serializer(Serializers.valueOf(this.gremlinConfig.getSerializer()).simpleInstance());
+            }
+            
+            cluster = builder.create();
         } catch (IllegalArgumentException e) {
             throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
         }

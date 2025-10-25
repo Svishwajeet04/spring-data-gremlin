@@ -105,6 +105,13 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
+    public void deleteAllById(Iterable<? extends ID> ids) {
+        for (ID id : ids){
+            this.operations.deleteById(id, this.information.createGremlinSource());
+        }
+    }
+
+    @Override
     public void deleteById(@NonNull ID id) {
         this.operations.deleteById(id, this.information.createGremlinSource());
     }

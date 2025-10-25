@@ -1,0 +1,376 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '6.0.7'
+    id 'jacoco'
+}
+
+group = 'com.microsoft.spring.data.gremlin'
+archivesBaseName = 'spring-data-gremlin'
+version = '2.3.1-SNAPSHOT'
+
+description = 'Gremlin support for Spring Data'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    springFrameworkVersion = '6.1.2'
+    springDataVersion = '3.2.1'
+    springBootTestVersion = '3.2.1'
+    gremlinDriverVersion = '3.7.3'
+    commonsLang3Version = '3.14.0'
+    lombokVersion = '1.18.30'
+    mockitoCoreVersion = '5.8.0'
+    jacksonVersion = '2.16.1'
+}
+
+dependencies {
+    // Spring framework BOM
+    implementation platform("org.springframework:spring-framework-bom:${springFrameworkVersion}")
+
+    // Spring framework
+    implementation('org.springframework:spring-core') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+
+    // Spring web
+    implementation 'org.springframework:spring-web'
+
+    // Spring Tx
+    implementation 'org.springframework:spring-tx'
+
+    // Spring context
+    implementation 'org.springframework:spring-context'
+
+    // Spring Data Commons
+    implementation "org.springframework.data:spring-data-commons:${springDataVersion}"
+
+    // Apache Tinkerpop Gremlin Driver
+    implementation "org.apache.tinkerpop:gremlin-driver:${gremlinDriverVersion}"
+
+    // Apache Commons Lang3
+    implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
+
+    // Jackson databind
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+
+    // Spring Boot auto-config (compileOnly) for auto-configuration support
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure:${springBootTestVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootTestVersion}"
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // Test dependencies
+    testImplementation "org.mockito:mockito-core:${mockitoCoreVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootTestVersion}"
+
+    // JUnit 4 support for existing tests
+    testImplementation 'junit:junit:4.13.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.10.1'
+}
+
+// Resolve dependency conflicts
+configurations.all {
+    resolutionStrategy {
+        force 'com.google.guava:guava:33.0.0-jre'
+        eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'com.google.collections' && details.requested.name == 'google-collections') {
+                details.useTarget group: 'com.google.guava', name: 'guava', version: '33.0.0-jre'
+                details.because 'google-collections is replaced by guava'
+            }
+        }
+    }
+}
+
+processResources {
+    filesMatching(['META-INF/project.properties', 'telemetry.config']) {
+        expand(project.properties)
+    }
+}
+
+checkstyle {
+    toolVersion = '10.12.7'
+    configFile = file("${project.rootDir}/config/checkstyle.xml")
+    ignoreFailures = true
+    showViolations = true
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+    enabled = false
+}
+
+checkstyleTest {
+    source = 'src/test/java'
+    enabled = false
+}
+
+spotbugs {
+    effort = 'max'
+    reportLevel = 'low'
+    excludeFilter = file("${project.rootDir}/config/findbugs-exclude.xml")
+}
+
+spotbugsMain {
+    reports {
+        xml.enabled = true
+        html.enabled = false
+    }
+}
+
+jacoco {
+    toolVersion = '0.8.11'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+    options.addBooleanOption('Xdoclint:none', true)
+    failOnError = false
+}
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'Microsoft',
+            'Specification-Title': project.name,
+            'Specification-Version': project.version,
+            'Specification-Vendor': 'Microsoft'
+        )
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Spring Data Gremlin'
+                description = 'Gremlin support for Spring Data'
+                url = 'https://github.com/Microsoft/spring-data-gremlin'
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://github.com/Microsoft/spring-data-gremlin/blob/master/LICENSE'
+                        distribution = 'repo'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com:Microsoft/spring-data-gremlin.git'
+                    developerConnection = 'scm:git:ssh://github.com:Microsoft/spring-data-gremlin.git'
+                    url = 'https://github.com/Microsoft/spring-data-gremlin/tree/master'
+                }
+
+                developers {
+                    developer {
+                        id = 'incarnation-p-lee'
+                        name = 'Pan Li'
+                        email = 'panli@microsoft.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Integration tests configuration
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    shouldRunAfter test
+
+    useJUnitPlatform()
+}
+
+check.dependsOn integrationTest
+
+// Profile-like behavior for full tests
+if (project.hasProperty('fullTest')) {
+    integrationTest.enabled = true
+} else {
+    integrationTest.enabled = false
+}
+
+
+//plugins {
+//    id 'java'
+//    id 'checkstyle'
+//    id 'jacoco'
+//    id 'maven-publish'
+////    id 'spotbugs' // Deprecated; can replace with SpotBugs
+//}
+//
+//group = 'com.microsoft.spring.data.gremlin'
+//version = '2.3.1-SNAPSHOT'
+//description = 'Gremlin support for Spring Data'
+//
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//    targetCompatibility = JavaVersion.VERSION_1_8
+//    withJavadocJar()
+//    withSourcesJar()
+//}
+//
+//repositories {
+//    mavenCentral()
+//    maven { url 'https://repo.spring.io/release' }
+//    maven { url 'https://repo.spring.io/libs-release' }
+//    maven { url 'https://repo.spring.io/milestone' }
+//    maven { url 'https://repo.spring.io/snapshot' }
+//}
+//
+//
+//ext {
+//    springFrameworkVersion = '5.2.6.RELEASE'
+//    springDataVersion = '2.3.0.RELEASE'
+//    springBootTestVersion = '2.3.0.RELEASE'
+//    gremlinDriverVersion = '3.2.4'
+//    commonsLang3Version = '3.7'
+//    lombokVersion = '1.16.18'
+//    mockitoVersion = '2.8.9'
+//    jacksonVersion = '2.10.0.pr1'
+//}
+//
+//dependencies {
+//    // Spring framework
+//    implementation("org.springframework:spring-core") {
+//        exclude group: 'commons-logging', module: 'commons-logging'
+//    }
+//
+//    implementation platform("org.springframework:spring-framework-bom:${springFrameworkVersion}")
+//
+//
+//    implementation "org.springframework:spring-web"
+//    implementation "org.springframework:spring-tx"
+//    implementation "org.springframework:spring-context"
+//
+//    // Spring Data
+//    implementation "org.springframework.data:spring-data-commons:${springDataVersion}"
+//
+//    // Apache Tinkerpop Gremlin
+//    implementation "org.apache.tinkerpop:gremlin-driver:${gremlinDriverVersion}"
+//
+//    // Commons Lang
+//    implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
+//
+//    // Jackson
+//    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+//
+//    // Lombok (compile-only, not packaged)
+//    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+//    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+//
+//    // Test dependencies
+//    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+//    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootTestVersion}"
+//}
+//
+//tasks.withType(JavaCompile) {
+//    options.encoding = 'UTF-8'
+//}
+//
+//tasks.withType(Javadoc) {
+//    failOnError = false
+//    options.addStringOption('Xdoclint:none', '-quiet')
+//    options.memberLevel = JavadocMemberLevel.PRIVATE
+//}
+//
+//checkstyle {
+//    toolVersion = '8.36'
+//    configFile = file("$projectDir/config/checkstyle.xml")
+//    ignoreFailures = false
+//}
+//
+//tasks.register('integrationTest', Test) {
+//    description = 'Runs integration tests.'
+//    group = 'verification'
+//    onlyIf { !project.hasProperty('skip.integration.tests') || project.property('skip.integration.tests') != 'true' }
+//}
+//
+//tasks.test {
+//    useJUnitPlatform()
+//}
+//
+//jacoco {
+//    toolVersion = "0.8.6"
+//}
+//
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            from components.java
+//            pom {
+//                name.set("Spring Data Gremlin")
+//                description.set("Gremlin support for Spring Data")
+//                url.set("https://github.com/Microsoft/spring-data-gremlin")
+//                licenses {
+//                    license {
+//                        name.set("MIT")
+//                        url.set("https://github.com/Microsoft/spring-data-gremlin/blob/master/LICENSE")
+//                        distribution.set("repo")
+//                    }
+//                }
+//                scm {
+//                    connection.set("scm:git:git://github.com:Microsoft/spring-data-gremlin.git")
+//                    developerConnection.set("scm:git:ssh://github.com:Microsoft/spring-data-gremlin.git")
+//                    url.set("https://github.com/Microsoft/spring-data-gremlin/tree/master")
+//                }
+//                developers {
+//                    developer {
+//                        id.set("incarnation-p-lee")
+//                        name.set("Pan Li")
+//                        email.set("panli@microsoft.com")
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//tasks.jar {
+//    manifest {
+//        attributes(
+//                'Implementation-Title': project.name,
+//                'Implementation-Version': project.version,
+//                'Specification-Title': project.name,
+//                'Specification-Version': project.version
+//        )
+//    }
+//}
+//
+//tasks.register('fullTest') {
+//    doFirst {
+//        project.ext.set('skip.integration.tests', 'false')
+//    }
+//}

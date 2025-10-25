@@ -28,6 +28,7 @@ import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 import com.microsoft.spring.data.gremlin.query.query.QueryFindScriptGenerator;
 import com.microsoft.spring.data.gremlin.query.query.QueryScriptGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Result;
@@ -48,6 +49,7 @@ import java.util.concurrent.ExecutionException;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
     private final GremlinFactory factory;
@@ -85,6 +87,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @NonNull
     private List<Result> executeQuery(@NonNull List<String> queries) {
+        log.debug("Executing Gremlin queries: {}", queries);
+        
         final List<List<String>> parallelQueries = GremlinUtils.toParallelQueryList(queries);
 
         return parallelQueries.stream().flatMap(q -> executeQueryParallel(q).stream()).collect(toList());
@@ -93,8 +97,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     @NonNull
     private List<Result> executeQueryParallel(@NonNull List<String> queries) {
         return queries.parallelStream()
-                .map(q -> getGremlinClient().submit(q).all())
-                .collect(toList()).parallelStream().flatMap(f -> {
+                .map(q -> {
+                    log.debug("Submitting Gremlin query: {}", q);
+                    return getGremlinClient().submit(q).all();
+                })
+                .toList().parallelStream().flatMap(f -> {
                     try {
                         return f.get().stream();
                     } catch (InterruptedException | ExecutionException e) {

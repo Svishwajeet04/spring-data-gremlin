@@ -161,6 +161,9 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
     @Override
     @SuppressWarnings("unchecked")
     public List<String> generate(@NonNull GremlinQuery query) {
+        if (query.isRaw()) {
+            return Collections.singletonList(query.getRawQuery());
+        }
         final List<String> scriptList = new ArrayList<>(this.generateScript(query));
 
         return Collections.singletonList(String.join(GREMLIN_PRIMITIVE_INVOKE, scriptList));

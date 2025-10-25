@@ -39,6 +39,6 @@ public class GremlinUtilsUnitTest {
 
     @Test
     public void testToPrimitiveLong() {
-        Assert.assertEquals((long) 3, GremlinUtils.toPrimitiveLong(new Long(3)));
+        Assert.assertEquals((long) 3, GremlinUtils.toPrimitiveLong(3L));
     }
 }
