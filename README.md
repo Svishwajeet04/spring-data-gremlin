@@ -104,32 +104,30 @@ This repository now supports Spring Data 3.x (Spring Boot 3.x) with Java 17+ as 
 
 ## Quick Start
 
-### Add the dependency
-`spring-data-gremlin` is published on Maven Central Repository.  
+### Building the Project Locally
+
+This project uses Gradle build system. To build and use this library locally:
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd spring-data-gremlin
+   ```
+
+2. **Build the project**:
+   ```bash
+   ./gradlew build
+   ```
+
+3. **Install to local Maven repository** (optional):
+   ```bash
+   ./gradlew publishToMavenLocal
+   ```
 
 **Requirements:**
 - Java 17+ (for Spring Boot 3.x compatibility)
 - Spring Boot 3.2.x or Spring Framework 6.1.2+
-
-If you are using Gradle, add the following dependency to your `build.gradle` file.  
-
-```gradle
-dependencies {
-    implementation 'com.spring.data.gremlin:spring-data-gremlin:2.3.1-SNAPSHOT'
-}
-```
-
-If you are using Maven, add the following dependency to your `pom.xml` file.  
-
-```xml
-<dependency>
-    <groupId>com.spring.data.gremlin</groupId>
-    <artifactId>spring-data-gremlin</artifactId>
-    <version>2.3.1-SNAPSHOT</version>
-</dependency>
-```
-
-**Note:** This version requires Java 17+ and Spring Boot 3.x. For Java 8+ compatibility, use version 2.1.7.
+- Gradle 7.0+ or Maven 3.6.3+
 
 ### Setup Configuration
 Setup ```application.yml``` file.(Use Azure Cosmos DB Graph as an example.)
