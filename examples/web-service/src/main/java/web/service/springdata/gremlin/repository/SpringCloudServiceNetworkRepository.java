@@ -16,7 +16,7 @@
 
 package web.service.springdata.gremlin.repository;
 
-import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
+import com.spring.data.gremlin.repository.GremlinRepository;
 import org.springframework.stereotype.Repository;
 import web.service.springdata.gremlin.domain.SpringCloudServiceNetwork;
 

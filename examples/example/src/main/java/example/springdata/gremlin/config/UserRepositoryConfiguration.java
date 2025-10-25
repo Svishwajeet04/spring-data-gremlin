@@ -20,9 +20,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import com.microsoft.spring.data.gremlin.common.GremlinConfig;
-import com.microsoft.spring.data.gremlin.config.AbstractGremlinConfiguration;
-import com.microsoft.spring.data.gremlin.repository.config.EnableGremlinRepositories;
+import com.spring.data.gremlin.common.GremlinConfig;
+import com.spring.data.gremlin.config.AbstractGremlinConfiguration;
+import com.spring.data.gremlin.repository.config.EnableGremlinRepositories;
 
 
 @Configuration

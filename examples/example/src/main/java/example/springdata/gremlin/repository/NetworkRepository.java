@@ -16,7 +16,7 @@
 
 package example.springdata.gremlin.repository;
 
-import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
+import com.spring.data.gremlin.repository.GremlinRepository;
 import example.springdata.gremlin.domain.Network;
 import org.springframework.stereotype.Repository;
 

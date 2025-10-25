@@ -1,8 +1,8 @@
 package web.service.springdata.gremlin.domain;
 
-import com.microsoft.spring.data.gremlin.annotation.EdgeSet;
-import com.microsoft.spring.data.gremlin.annotation.Graph;
-import com.microsoft.spring.data.gremlin.annotation.VertexSet;
+import com.spring.data.gremlin.annotation.EdgeSet;
+import com.spring.data.gremlin.annotation.Graph;
+import com.spring.data.gremlin.annotation.VertexSet;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;

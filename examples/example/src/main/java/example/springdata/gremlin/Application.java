@@ -15,7 +15,7 @@
  */
 package example.springdata.gremlin;
 
-import com.microsoft.spring.data.gremlin.common.GremlinFactory;
+import com.spring.data.gremlin.common.GremlinFactory;
 import example.springdata.gremlin.domain.Network;
 import example.springdata.gremlin.domain.Person;
 import example.springdata.gremlin.domain.Relation;

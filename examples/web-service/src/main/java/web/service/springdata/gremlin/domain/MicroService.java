@@ -15,7 +15,7 @@
  */
 package web.service.springdata.gremlin.domain;
 
-import com.microsoft.spring.data.gremlin.annotation.Vertex;
+import com.spring.data.gremlin.annotation.Vertex;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

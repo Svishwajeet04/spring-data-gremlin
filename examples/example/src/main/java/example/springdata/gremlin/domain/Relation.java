@@ -16,9 +16,9 @@
 
 package example.springdata.gremlin.domain;
 
-import com.microsoft.spring.data.gremlin.annotation.Edge;
-import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
-import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
+import com.spring.data.gremlin.annotation.Edge;
+import com.spring.data.gremlin.annotation.EdgeFrom;
+import com.spring.data.gremlin.annotation.EdgeTo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

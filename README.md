@@ -19,10 +19,10 @@ Version mapping between spring boot and spring-data-gremlin:
 
 | Spring boot version                                         | spring-data-gremlin version                                                                                                                                                                                                                   |
 |:-----------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| ![version](https://img.shields.io/badge/version-2.3.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.3.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.3.*) |
-| ![version](https://img.shields.io/badge/version-2.2.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.2.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.2.*) |
-| ![version](https://img.shields.io/badge/version-2.1.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.1.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.1.*) |
-| ![version](https://img.shields.io/badge/version-2.0.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.0.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.0.*) |
+| ![version](https://img.shields.io/badge/version-2.3.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.3.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.3.*) |
+| ![version](https://img.shields.io/badge/version-2.2.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.2.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.2.*) |
+| ![version](https://img.shields.io/badge/version-2.1.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.1.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.1.*) |
+| ![version](https://img.shields.io/badge/version-2.0.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.0.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.0.*) |
 
 ## TOC
 
@@ -82,7 +82,7 @@ If you are using Maven, add the following dependency.
 
 ```xml
 <dependency>
-    <groupId>com.microsoft.spring.data.gremlin</groupId>
+    <groupId>com.spring.data.gremlin</groupId>
     <artifactId>spring-data-gremlin</artifactId>
     <version>2.1.7</version>
 </dependency>

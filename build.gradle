@@ -6,7 +6,7 @@ plugins {
     id 'jacoco'
 }
 
-group = 'com.microsoft.spring.data.gremlin'
+group = 'com.spring.data.gremlin'
 archivesBaseName = 'spring-data-gremlin'
 version = '2.3.1-SNAPSHOT'
 
@@ -231,7 +231,7 @@ if (project.hasProperty('fullTest')) {
 ////    id 'spotbugs' // Deprecated; can replace with SpotBugs
 //}
 //
-//group = 'com.microsoft.spring.data.gremlin'
+//group = 'com.spring.data.gremlin'
 //version = '2.3.1-SNAPSHOT'
 //description = 'Gremlin support for Spring Data'
 //
