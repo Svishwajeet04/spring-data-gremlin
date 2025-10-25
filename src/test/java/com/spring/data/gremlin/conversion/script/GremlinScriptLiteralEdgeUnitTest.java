@@ -31,6 +31,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
     private MappingGremlinConverter converter;
     private GremlinMappingContext mappingContext;
     private GremlinSource gremlinSource;
+    private Relationship relationship;  // Make relationship accessible to test methods
 
     @Mock
     private ApplicationContext applicationContext;
@@ -43,14 +44,14 @@ public class GremlinScriptLiteralEdgeUnitTest {
         this.mappingContext.getPersistentEntity(Person.class);
         this.converter = new MappingGremlinConverter(this.mappingContext);
 
-        final Relationship relationship = new Relationship("456", "rel-name", "china",
-                new Person("123", "bill"), // from
-                new Project("321", "ms-project", "http") // to
+        this.relationship = new Relationship("rel-name", "china",
+                new Person("123", "bill"), // from - use String ID
+                new Project("321", "ms-project", "http") // to - use String ID
         );
         @SuppressWarnings("unchecked") final GremlinEntityInformation info =
                 new GremlinEntityInformation(Relationship.class);
         this.gremlinSource = info.createGremlinSource();
-        this.converter.write(relationship, gremlinSource);
+        this.converter.write(this.relationship, gremlinSource);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
     @Test
     public void testGenerateFindByIdScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateFindByIdScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E().hasId('456')");
+        assertEquals(queryList.get(0), "g.E().hasId('" + this.relationship.getId() + "')");
     }
 
     @Test
@@ -77,7 +78,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateInsertScript(gremlinSource);
         assertEquals(queryList.get(0), "g.V('123').as('from').V('321').as('to')" +
                 ".addE('label-relationship').from('from').to('to')" +
-                ".property(id, '456')" +
+                ".property(id, '" + this.relationship.getId() + "')" +
                 ".property('person', '{\"id\":\"123\",\"name\":\"bill\"}')" +
                 ".property('name', 'rel-name')" +
                 ".property('project', '{\"id\":\"321\",\"name\":\"ms-project\",\"uri\":\"http\"}')" +
@@ -88,7 +89,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
     @Test
     public void testGenerateUpdateScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateUpdateScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E('456')" +
+        assertEquals(queryList.get(0), "g.E('" + this.relationship.getId() + "')" +
                 ".property('person', '{\"id\":\"123\",\"name\":\"bill\"}')" +
                 ".property('name', 'rel-name')" +
                 ".property('project', '{\"id\":\"321\",\"name\":\"ms-project\",\"uri\":\"http\"}')" +
@@ -99,7 +100,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
     @Test
     public void testGenerateDeleteByIdScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateDeleteByIdScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E().hasId('456').drop()");
+        assertEquals(queryList.get(0), "g.E().hasId('" + this.relationship.getId() + "').drop()");
     }
 
     @Test

@@ -32,4 +32,20 @@ public class Group {
         this.student = student;
         this.groupOwner = groupOwner;
     }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public GroupOwner getGroupOwner() {
+        return groupOwner;
+    }
+
+    public void setGroupOwner(GroupOwner groupOwner) {
+        this.groupOwner = groupOwner;
+    }
 }

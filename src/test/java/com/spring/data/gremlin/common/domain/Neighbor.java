@@ -8,14 +8,12 @@ package com.spring.data.gremlin.common.domain;
 import com.spring.data.gremlin.annotation.Edge;
 import com.spring.data.gremlin.annotation.EdgeFrom;
 import com.spring.data.gremlin.annotation.EdgeTo;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Edge
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Neighbor {
 
     private Long id;
@@ -27,4 +25,27 @@ public class Neighbor {
 
     @EdgeTo
     private Student studentTo;
+
+    public Neighbor(Long id, Long distance, Student studentFrom, Student studentTo) {
+        this.id = id;
+        this.distance = distance;
+        this.studentFrom = studentFrom;
+        this.studentTo = studentTo;
+    }
+
+    public Student getStudentFrom() {
+        return studentFrom;
+    }
+
+    public void setStudentFrom(Student studentFrom) {
+        this.studentFrom = studentFrom;
+    }
+
+    public Student getStudentTo() {
+        return studentTo;
+    }
+
+    public void setStudentTo(Student studentTo) {
+        this.studentTo = studentTo;
+    }
 }

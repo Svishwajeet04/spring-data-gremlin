@@ -32,6 +32,7 @@ ext {
     lombokVersion = '1.18.30'
     mockitoCoreVersion = '5.8.0'
     jacksonVersion = '2.16.1'
+    janusGraphVersion = '1.0.0'
 }
 
 dependencies {
@@ -60,6 +61,9 @@ dependencies {
     // Apache Tinkerpop Gremlin Driver
     implementation "org.apache.tinkerpop:gremlin-driver:${gremlinDriverVersion}"
 
+    // JanusGraph (optional dependency)
+    compileOnly "org.janusgraph:janusgraph-core:${janusGraphVersion}"
+
     // Apache Commons Lang3
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
 
@@ -79,6 +83,11 @@ dependencies {
     // Test dependencies
     testImplementation "org.mockito:mockito-core:${mockitoCoreVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootTestVersion}"
+    
+    // JanusGraph test dependency
+    testImplementation "org.janusgraph:janusgraph-core:${janusGraphVersion}"
+    testImplementation "org.janusgraph:janusgraph-berkeleyje:${janusGraphVersion}"
+    testImplementation "org.janusgraph:janusgraph-lucene:${janusGraphVersion}"
 
     // JUnit 4 support for existing tests
     testImplementation 'junit:junit:4.13.2'

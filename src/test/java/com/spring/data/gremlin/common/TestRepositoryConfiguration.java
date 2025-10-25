@@ -5,15 +5,18 @@
  */
 package com.spring.data.gremlin.common;
 
+import com.spring.data.gremlin.autoconfigure.GlobalJanusGraphTestConfiguration;
 import com.spring.data.gremlin.config.AbstractGremlinConfiguration;
 import com.spring.data.gremlin.repository.config.EnableGremlinRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 @EnableGremlinRepositories
 @PropertySource(value = {"classpath:application.properties"})
 @EnableConfigurationProperties(TestGremlinProperties.class)
+@Import(GlobalJanusGraphTestConfiguration.class)
 public class TestRepositoryConfiguration extends AbstractGremlinConfiguration {
 
     @Autowired

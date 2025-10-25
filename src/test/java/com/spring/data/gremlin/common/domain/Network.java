@@ -8,7 +8,6 @@ package com.spring.data.gremlin.common.domain;
 import com.spring.data.gremlin.annotation.EdgeSet;
 import com.spring.data.gremlin.annotation.Graph;
 import com.spring.data.gremlin.annotation.VertexSet;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -17,15 +16,12 @@ import java.util.List;
 @Graph
 public class Network {
 
-    @Getter
     @Setter
     private String id;
 
-    @Getter
     @VertexSet
     private List<Object> vertexList;
 
-    @Getter
     @EdgeSet
     private List<Object> edgeList;
 
@@ -40,5 +36,25 @@ public class Network {
 
     public void edgeAdd(Object object) {
         this.edgeList.add(object);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public List<Object> getVertexList() {
+        return vertexList != null ? new ArrayList<>(vertexList) : new ArrayList<>();
+    }
+
+    public void setVertexList(List<Object> vertexList) {
+        this.vertexList = vertexList != null ? new ArrayList<>(vertexList) : new ArrayList<>();
+    }
+
+    public List<Object> getEdgeList() {
+        return edgeList != null ? new ArrayList<>(edgeList) : new ArrayList<>();
+    }
+
+    public void setEdgeList(List<Object> edgeList) {
+        this.edgeList = edgeList != null ? new ArrayList<>(edgeList) : new ArrayList<>();
     }
 }

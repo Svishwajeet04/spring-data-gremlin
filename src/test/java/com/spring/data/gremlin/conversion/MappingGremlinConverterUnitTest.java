@@ -48,16 +48,16 @@ public class MappingGremlinConverterUnitTest {
         Assert.assertEquals(this.converter.getMappingContext(), this.mappingContext);
         Assert.assertNotNull(this.converter.getConversionService());
 
-        final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
+        final Person person = new Person(null, TestConstants.VERTEX_PERSON_NAME);  // ID will be auto-generated
         final Field[] fields = FieldUtils.getAllFields(Person.class);
 
         Assert.assertNotNull(this.converter.getPropertyAccessor(person));
-        Assert.assertEquals(converter.getIdFieldValue(person), TestConstants.VERTEX_PERSON_ID);
+        Assert.assertEquals(converter.getIdFieldValue(person), person.getId());
     }
 
     @Test
     public void testMappingGremlinConverterVertexRead() {
-        final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
+        final Person person = new Person(null, TestConstants.VERTEX_PERSON_NAME);  // ID will be auto-generated
         final GremlinEntityInformation<Person, String> info = new GremlinEntityInformation<>(Person.class);
         final GremlinSource source = info.createGremlinSource();
 
@@ -70,11 +70,11 @@ public class MappingGremlinConverterUnitTest {
 
     @Test
     public void testMappingGremlinConverterEdgeRead() {
-        final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-        final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
-                TestConstants.VERTEX_PROJECT_URI);
-        final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
-                TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION, person, project);
+        final Person person = new Person(null, TestConstants.VERTEX_PERSON_NAME);  // ID will be auto-generated
+        final Project project = new Project(null, TestConstants.VERTEX_PROJECT_NAME,
+                TestConstants.VERTEX_PROJECT_URI);  // ID will be auto-generated
+        final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_NAME,
+                TestConstants.EDGE_RELATIONSHIP_LOCATION, person, project);  // ID will be auto-generated
         final GremlinEntityInformation<Relationship, String> info = new GremlinEntityInformation<>(Relationship.class);
         final GremlinSource source = info.createGremlinSource();
 

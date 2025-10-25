@@ -33,7 +33,7 @@ public class GremlinRepositoryFactoryBeanUnitTest {
 
     @Test
     public void testGetFactoryInstance() {
-        final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
+        final Person person = new Person(null, TestConstants.VERTEX_PERSON_NAME);  // ID will be auto-generated
         final RepositoryFactorySupport factorySupport = this.factoryBean.getFactoryInstance(this.context);
 
         Assert.assertNotNull(factorySupport);

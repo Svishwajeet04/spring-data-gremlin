@@ -41,7 +41,7 @@ public class GremlinScriptLiteralVertexUnitTest {
         this.mappingContext.getPersistentEntity(Person.class);
         this.converter = new MappingGremlinConverter(this.mappingContext);
 
-        final Person person = new Person("123", "bill");
+        final Person person = new Person("123", "bill");  // Use String ID for Spring Data Gremlin compatibility
         @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(Person.class);
         this.gremlinSource = info.createGremlinSource();
         this.converter.write(person, gremlinSource);

@@ -32,16 +32,14 @@ import java.util.List;
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class RelationshipRepositoryIT {
 
-    private final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-    private final Person person0 = new Person(TestConstants.VERTEX_PERSON_0_ID, TestConstants.VERTEX_PERSON_0_NAME);
-    private final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
-            TestConstants.VERTEX_PROJECT_URI);
-    private final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
-            TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION,
-            this.person, this.project);
-    private final Relationship relationship0 = new Relationship(TestConstants.EDGE_RELATIONSHIP_0_ID,
-            TestConstants.EDGE_RELATIONSHIP_0_NAME, TestConstants.EDGE_RELATIONSHIP_0_LOCATION,
-            this.person0, this.project);
+    private final Person person = new Person(null, TestConstants.VERTEX_PERSON_NAME);  // ID will be auto-generated
+    private final Person person0 = new Person(null, TestConstants.VERTEX_PERSON_0_NAME);  // ID will be auto-generated
+    private final Project project = new Project(null, TestConstants.VERTEX_PROJECT_NAME,
+            TestConstants.VERTEX_PROJECT_URI);  // ID will be auto-generated
+    private final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_NAME,
+            TestConstants.EDGE_RELATIONSHIP_LOCATION, this.person, this.project);  // ID will be auto-generated
+    private final Relationship relationship0 = new Relationship(TestConstants.EDGE_RELATIONSHIP_0_NAME,
+            TestConstants.EDGE_RELATIONSHIP_0_LOCATION, this.person0, this.project);  // ID will be auto-generated
 
     @Autowired
     private RelationshipRepository relationshipRepo;
@@ -64,28 +62,28 @@ public class RelationshipRepositoryIT {
 
     @Test
     public void testDeleteAll() {
-        this.personRepo.save(this.person);
-        this.projectRepo.save(this.project);
-        this.relationshipRepo.save(this.relationship);
+        Person savedPerson = this.personRepo.save(this.person);
+        Project savedProject = this.projectRepo.save(this.project);
+        Relationship savedRelationship = this.relationshipRepo.save(this.relationship);
 
-        Assert.assertTrue(this.relationshipRepo.existsById(this.relationship.getId()));
+        Assert.assertTrue(this.relationshipRepo.existsById(savedRelationship.getId()));
 
         this.relationshipRepo.deleteAll();
 
-        Assert.assertFalse(this.relationshipRepo.existsById(this.person.getId()));
+        Assert.assertFalse(this.relationshipRepo.existsById(savedRelationship.getId()));
     }
 
     @Test
     public void testDeleteById() {
-        this.personRepo.save(this.person);
-        this.projectRepo.save(this.project);
-        this.relationshipRepo.save(this.relationship);
+        Person savedPerson = this.personRepo.save(this.person);
+        Project savedProject = this.projectRepo.save(this.project);
+        Relationship savedRelationship = this.relationshipRepo.save(this.relationship);
 
-        Assert.assertTrue(this.relationshipRepo.existsById(this.relationship.getId()));
+        Assert.assertTrue(this.relationshipRepo.existsById(savedRelationship.getId()));
 
-        this.relationshipRepo.deleteById(this.relationship.getId());
+        this.relationshipRepo.deleteById(savedRelationship.getId());
 
-        Assert.assertFalse(this.relationshipRepo.existsById(this.relationship.getId()));
+        Assert.assertFalse(this.relationshipRepo.existsById(savedRelationship.getId()));
     }
 
     @Test
@@ -150,7 +148,7 @@ public class RelationshipRepositoryIT {
         Assert.assertEquals(foundRelationship.getId(), this.relationship.getId());
         Assert.assertEquals(foundRelationship.getName(), this.relationship.getName());
 
-        Assert.assertFalse(this.relationshipRepo.findById(this.person.getId()).isPresent());
+        Assert.assertFalse(this.relationshipRepo.findById("non-existent-id").isPresent());
     }
 
     @Test
@@ -159,7 +157,7 @@ public class RelationshipRepositoryIT {
         this.projectRepo.save(this.project);
         this.relationshipRepo.save(this.relationship);
 
-        Assert.assertFalse(this.relationshipRepo.existsById(this.person.getId()));
+        Assert.assertFalse(this.relationshipRepo.existsById("non-existent-id"));
         Assert.assertTrue(this.relationshipRepo.existsById(this.relationship.getId()));
     }
 

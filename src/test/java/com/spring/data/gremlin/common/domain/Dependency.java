@@ -8,12 +8,10 @@ package com.spring.data.gremlin.common.domain;
 import com.spring.data.gremlin.annotation.Edge;
 import com.spring.data.gremlin.annotation.EdgeFrom;
 import com.spring.data.gremlin.annotation.EdgeTo;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Edge
 @Data
-@AllArgsConstructor
 public class Dependency {
 
     private String id;
@@ -25,4 +23,30 @@ public class Dependency {
 
     @EdgeTo
     private Library target;
+
+    public Dependency() {
+    }
+
+    public Dependency(String id, String type, Library source, Library target) {
+        this.id = id;
+        this.type = type;
+        this.source = source;
+        this.target = target;
+    }
+
+    public Library getSource() {
+        return source;
+    }
+
+    public void setSource(Library source) {
+        this.source = source;
+    }
+
+    public Library getTarget() {
+        return target;
+    }
+
+    public void setTarget(Library target) {
+        this.target = target;
+    }
 }

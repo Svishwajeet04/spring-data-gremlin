@@ -6,15 +6,14 @@
 package com.spring.data.gremlin.common.domain;
 
 import com.spring.data.gremlin.annotation.Vertex;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Vertex
@@ -34,4 +33,30 @@ public class Service {
     private Date createAt;
 
     private Map<String, Object> properties;
+
+    public Service(String id, int instanceCount, boolean active, String name, ServiceType type, Date createAt, Map<String, Object> properties) {
+        this.id = id;
+        this.instanceCount = instanceCount;
+        this.active = active;
+        this.name = name;
+        this.type = type;
+        this.createAt = createAt != null ? new Date(createAt.getTime()) : null;
+        this.properties = properties != null ? new HashMap<>(properties) : new HashMap<>();
+    }
+
+    public Date getCreateAt() {
+        return createAt != null ? new Date(createAt.getTime()) : null;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt != null ? new Date(createAt.getTime()) : null;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties != null ? new HashMap<>(properties) : new HashMap<>();
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties != null ? new HashMap<>(properties) : new HashMap<>();
+    }
 }

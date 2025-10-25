@@ -31,12 +31,11 @@ import java.util.Collections;
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class NetworkRepositoryIT {
 
-    private final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-    private final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
-            TestConstants.VERTEX_PROJECT_URI);
-    private final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
-            TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION,
-            this.person, this.project);
+    private final Person person = new Person(null, TestConstants.VERTEX_PERSON_NAME);  // ID will be auto-generated
+    private final Project project = new Project(null, TestConstants.VERTEX_PROJECT_NAME,
+            TestConstants.VERTEX_PROJECT_URI);  // ID will be auto-generated
+    private final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_NAME,
+            TestConstants.EDGE_RELATIONSHIP_LOCATION, this.person, this.project);  // ID will be auto-generated
 
     @Autowired
     private NetworkRepository networkRepository;

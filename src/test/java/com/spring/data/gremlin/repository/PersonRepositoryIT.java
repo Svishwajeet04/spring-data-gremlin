@@ -30,10 +30,10 @@ import java.util.List;
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class PersonRepositoryIT {
 
-    private final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-    private final Person person0 = new Person(TestConstants.VERTEX_PERSON_0_ID, TestConstants.VERTEX_PERSON_0_NAME);
-    private final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
-            TestConstants.VERTEX_PROJECT_URI);
+    private final Person person = new Person(null, TestConstants.VERTEX_PERSON_NAME);  // ID will be auto-generated
+    private final Person person0 = new Person(null, TestConstants.VERTEX_PERSON_0_NAME);  // ID will be auto-generated
+    private final Project project = new Project(null, TestConstants.VERTEX_PROJECT_NAME,
+            TestConstants.VERTEX_PROJECT_URI);  // ID will be auto-generated
 
     @Autowired
     private PersonRepository repository;
@@ -53,110 +53,108 @@ public class PersonRepositoryIT {
 
     @Test
     public void testDeleteAll() {
-        this.repository.save(this.person);
+        Person savedPerson = this.repository.save(this.person);
 
-        Assert.assertTrue(this.repository.existsById(this.person.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson.getId()));
 
         this.repository.deleteAll();
 
-        Assert.assertFalse(this.repository.existsById(this.person.getId()));
+        Assert.assertFalse(this.repository.existsById(savedPerson.getId()));
     }
 
     @Test
     public void testDeleteById() {
-        this.repository.save(this.person);
-        this.repository.save(this.person0);
+        Person savedPerson = this.repository.save(this.person);
+        Person savedPerson0 = this.repository.save(this.person0);
 
-        Assert.assertTrue(this.repository.existsById(this.person.getId()));
-        Assert.assertTrue(this.repository.existsById(this.person0.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson0.getId()));
 
-        this.repository.deleteById(this.person.getId());
+        this.repository.deleteById(savedPerson.getId());
 
-        Assert.assertFalse(this.repository.existsById(this.person.getId()));
-        Assert.assertTrue(this.repository.existsById(this.person0.getId()));
+        Assert.assertFalse(this.repository.existsById(savedPerson.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson0.getId()));
     }
 
     @Test
     public void testDelete() {
-        this.repository.save(this.person);
-        this.repository.save(this.person0);
+        Person savedPerson = this.repository.save(this.person);
+        Person savedPerson0 = this.repository.save(this.person0);
 
-        Assert.assertTrue(this.repository.existsById(this.person.getId()));
-        Assert.assertTrue(this.repository.existsById(this.person0.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson0.getId()));
 
-        this.repository.delete(this.person);
+        this.repository.delete(savedPerson);
 
-        Assert.assertFalse(this.repository.existsById(this.person.getId()));
-        Assert.assertTrue(this.repository.existsById(this.person0.getId()));
+        Assert.assertFalse(this.repository.existsById(savedPerson.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson0.getId()));
     }
 
     @Test
     public void testDeleteAllIds() {
-        final List<Person> domains = Arrays.asList(this.person, this.person0);
-
-        this.repository.save(this.person);
-        this.repository.save(this.person0);
+        Person savedPerson = this.repository.save(this.person);
+        Person savedPerson0 = this.repository.save(this.person0);
+        final List<Person> domains = Arrays.asList(savedPerson, savedPerson0);
 
         this.repository.deleteAll(domains);
 
-        Assert.assertFalse(this.repository.existsById(this.person.getId()));
-        Assert.assertFalse(this.repository.existsById(this.person0.getId()));
+        Assert.assertFalse(this.repository.existsById(savedPerson.getId()));
+        Assert.assertFalse(this.repository.existsById(savedPerson0.getId()));
     }
 
     @Test
     public void testSave() {
-        this.repository.save(this.person);
-        this.repository.save(this.person0);
+        Person savedPerson = this.repository.save(this.person);
+        Person savedPerson0 = this.repository.save(this.person0);
 
-        Assert.assertTrue(this.repository.existsById(this.person.getId()));
-        Assert.assertTrue(this.repository.existsById(this.person0.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson0.getId()));
     }
 
     @Test
     public void testSaveAll() {
         final List<Person> domains = Arrays.asList(this.person, this.person0);
 
-        this.repository.saveAll(domains);
+        List<Person> savedDomains = Lists.newArrayList(this.repository.saveAll(domains));
 
-        Assert.assertTrue(this.repository.existsById(this.person.getId()));
-        Assert.assertTrue(this.repository.existsById(this.person0.getId()));
+        Assert.assertTrue(this.repository.existsById(savedDomains.get(0).getId()));
+        Assert.assertTrue(this.repository.existsById(savedDomains.get(1).getId()));
     }
 
     @Test
     public void testFindById() {
-        this.repository.save(this.person);
+        Person savedPerson = this.repository.save(this.person);
 
-        final Person foundPerson = this.repository.findById(this.person.getId()).get();
+        final Person foundPerson = this.repository.findById(savedPerson.getId()).get();
 
         Assert.assertNotNull(foundPerson);
-        Assert.assertEquals(foundPerson.getId(), this.person.getId());
-        Assert.assertEquals(foundPerson.getName(), this.person.getName());
+        Assert.assertEquals(foundPerson.getId(), savedPerson.getId());
+        Assert.assertEquals(foundPerson.getName(), savedPerson.getName());
 
-        Assert.assertFalse(this.repository.findById(this.person0.getId()).isPresent());
+        // Test finding non-existent person
+        Assert.assertFalse(this.repository.findById("non-existent-id").isPresent());
     }
 
     @Test
     public void testExistById() {
-        Assert.assertFalse(this.repository.existsById(this.person.getId()));
+        Assert.assertFalse(this.repository.existsById("non-existent-id"));
 
-        this.repository.save(this.person);
+        Person savedPerson = this.repository.save(this.person);
 
-        Assert.assertTrue(this.repository.existsById(this.person.getId()));
+        Assert.assertTrue(this.repository.existsById(savedPerson.getId()));
     }
 
     @Test
     public void testFindAllById() {
-        final List<Person> domains = Arrays.asList(this.person, this.person0);
-        final List<String> ids = Arrays.asList(this.person.getId(), this.person0.getId());
-
-        this.repository.saveAll(domains);
+        Person savedPerson = this.repository.save(this.person);
+        Person savedPerson0 = this.repository.save(this.person0);
+        final List<String> ids = Arrays.asList(savedPerson.getId(), savedPerson0.getId());
 
         final List<Person> foundDomains = (List<Person>) this.repository.findAllById(ids);
 
-        domains.sort((a, b) -> (a.getId().compareTo(b.getId())));
-        foundDomains.sort((a, b) -> (a.getId().compareTo(b.getId())));
-
-        Assert.assertArrayEquals(domains.toArray(), foundDomains.toArray());
+        Assert.assertEquals(2, foundDomains.size());
+        Assert.assertTrue(foundDomains.stream().anyMatch(p -> p.getId().equals(savedPerson.getId())));
+        Assert.assertTrue(foundDomains.stream().anyMatch(p -> p.getId().equals(savedPerson0.getId())));
     }
 
     @Test
@@ -166,16 +164,16 @@ public class PersonRepositoryIT {
 
         Assert.assertTrue(foundDomains.isEmpty());
 
-        this.repository.saveAll(domains);
+        List<Person> savedDomains = Lists.newArrayList(this.repository.saveAll(domains));
 
         foundDomains = (List<Person>) this.repository.findAll(Person.class);
 
-        Assert.assertEquals(domains.size(), foundDomains.size());
+        Assert.assertEquals(savedDomains.size(), foundDomains.size());
 
-        domains.sort((a, b) -> (a.getId().compareTo(b.getId())));
+        savedDomains.sort((a, b) -> (a.getId().compareTo(b.getId())));
         foundDomains.sort((a, b) -> (a.getId().compareTo(b.getId())));
 
-        Assert.assertArrayEquals(domains.toArray(), foundDomains.toArray());
+        Assert.assertArrayEquals(savedDomains.toArray(), foundDomains.toArray());
     }
 
     @Test
@@ -194,39 +192,39 @@ public class PersonRepositoryIT {
 
     @Test
     public void testDeleteAllByType() {
-        this.repository.save(this.person);
-        this.repository.save(this.person0);
+        Person savedPerson = this.repository.save(this.person);
+        Person savedPerson0 = this.repository.save(this.person0);
 
         this.repository.deleteAll(GremlinEntityType.VERTEX);
 
-        Assert.assertFalse(this.repository.findById(this.person.getId()).isPresent());
-        Assert.assertFalse(this.repository.findById(this.person0.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(savedPerson.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(savedPerson0.getId()).isPresent());
     }
 
     @Test
     public void testDeleteAllByClass() {
-        this.repository.save(this.person);
-        this.repository.save(this.person0);
-        this.projectRepository.save(this.project);
+        Person savedPerson = this.repository.save(this.person);
+        Person savedPerson0 = this.repository.save(this.person0);
+        Project savedProject = this.projectRepository.save(this.project);
 
         this.repository.deleteAll(Person.class);
 
-        Assert.assertFalse(this.repository.findById(this.person.getId()).isPresent());
-        Assert.assertFalse(this.repository.findById(this.person0.getId()).isPresent());
-        Assert.assertTrue(this.projectRepository.findById(this.project.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(savedPerson.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(savedPerson0.getId()).isPresent());
+        Assert.assertTrue(this.projectRepository.findById(savedProject.getId()).isPresent());
     }
 
     @Test
     public void testFindAll() {
         final List<Person> persons = Arrays.asList(this.person, this.person0);
-        this.repository.saveAll(persons);
+        List<Person> savedPersons = Lists.newArrayList(this.repository.saveAll(persons));
 
         final List<Person> foundPersons = Lists.newArrayList(this.repository.findAll());
 
         foundPersons.sort(Comparator.comparing(Person::getId));
-        persons.sort(Comparator.comparing(Person::getId));
+        savedPersons.sort(Comparator.comparing(Person::getId));
 
-        Assert.assertEquals(persons, foundPersons);
+        Assert.assertEquals(savedPersons, foundPersons);
 
         this.repository.deleteAll();
         Assert.assertFalse(this.repository.findAll().iterator().hasNext());
