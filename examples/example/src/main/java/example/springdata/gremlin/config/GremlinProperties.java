@@ -29,7 +29,6 @@ public class GremlinProperties {
     
     private boolean sslEnabled;
 
-    private boolean telemetryAllowed = true;
     
     private String serializer = Serializers.GRAPHSON.toString();
 

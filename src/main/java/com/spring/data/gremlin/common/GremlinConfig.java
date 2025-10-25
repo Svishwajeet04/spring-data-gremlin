@@ -23,8 +23,6 @@ public class GremlinConfig {
 
     private boolean sslEnabled;
 
-    private boolean telemetryAllowed;
-
     private String serializer;
 
     private int maxContentLength;
@@ -37,7 +35,6 @@ public class GremlinConfig {
         this.username = builder.username;
         this.password = builder.password;
         this.sslEnabled = builder.sslEnabled;
-        this.telemetryAllowed = builder.telemetryAllowed;
         this.serializer = builder.serializer;
         this.maxContentLength = builder.maxContentLength;
         this.typeSerializerRegistry = builder.typeSerializerRegistry;
@@ -54,8 +51,7 @@ public class GremlinConfig {
                 .password(password)
                 .port(Constants.DEFAULT_ENDPOINT_PORT)
                 .sslEnabled(true)
-                .serializer(Serializers.GRAPHSON.toString())
-                .telemetryAllowed(true);
+                .serializer(Serializers.GRAPHSON.toString());
     }
 
     public static class GremlinConfigBuilder {
@@ -64,7 +60,6 @@ public class GremlinConfig {
         private String username;
         private String password;
         private boolean sslEnabled;
-        private boolean telemetryAllowed;
         private String serializer;
         private int maxContentLength;
         private TypeSerializerRegistry typeSerializerRegistry;
@@ -91,11 +86,6 @@ public class GremlinConfig {
 
         public GremlinConfigBuilder sslEnabled(boolean sslEnabled) {
             this.sslEnabled = sslEnabled;
-            return this;
-        }
-
-        public GremlinConfigBuilder telemetryAllowed(boolean telemetryAllowed) {
-            this.telemetryAllowed = telemetryAllowed;
             return this;
         }
 

@@ -3,4 +3,3 @@ gremlin:
   port: 443
   username: /dbs/database/colls/collection
   password: password
-  telemetryAllowed: true

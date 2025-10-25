@@ -18,7 +18,6 @@ public class GremlinProperties {
     private String username = null;
     private String password = null;
     private boolean sslEnabled = false;
-    private boolean telemetryAllowed = true;
     // Default to GraphBinary for JanusGraph compatibility
     private String serializer = Serializers.GRAPHBINARY_V1.toString();
     private int maxContentLength = 0;

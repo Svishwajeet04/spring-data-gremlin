@@ -99,7 +99,7 @@ configurations.all {
 }
 
 processResources {
-    filesMatching(['META-INF/project.properties', 'telemetry.config']) {
+    filesMatching(['META-INF/project.properties']) {
         expand(project.properties)
     }
 }

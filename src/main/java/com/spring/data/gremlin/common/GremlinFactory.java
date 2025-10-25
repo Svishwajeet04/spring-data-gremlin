@@ -6,7 +6,6 @@
 package com.spring.data.gremlin.common;
 
 import com.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
-import com.spring.data.gremlin.telemetry.TelemetrySender;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.util.ser.GraphBinaryMessageSerializerV1;
@@ -72,15 +71,5 @@ public class GremlinFactory {
         }
 
         return this.gremlinCluster.connect();
-    }
-
-    @PostConstruct
-    private void sendTelemetry() {
-
-        if (gremlinConfig.isTelemetryAllowed()) {
-            final TelemetrySender sender = new TelemetrySender();
-
-            sender.send(this.getClass().getSimpleName());
-        }
     }
 }

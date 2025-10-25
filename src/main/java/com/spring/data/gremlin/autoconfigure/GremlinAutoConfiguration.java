@@ -45,7 +45,6 @@ public class GremlinAutoConfiguration extends GremlinConfigurationSupport {
                 .username(properties.getUsername())
                 .password(properties.getPassword())
                 .sslEnabled(properties.isSslEnabled())
-                .telemetryAllowed(properties.isTelemetryAllowed())
                 .serializer(properties.getSerializer())
                 .maxContentLength(properties.getMaxContentLength())
                 .typeSerializerRegistry(typeSerializerRegistry)
