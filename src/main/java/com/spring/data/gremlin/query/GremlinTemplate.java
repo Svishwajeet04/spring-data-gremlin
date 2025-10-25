@@ -35,6 +35,9 @@ import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
@@ -388,6 +391,228 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         }
 
         return this.recoverDomainList(source, results);
+    }
+
+    @Override
+    public Object queryForObject(@NonNull String query) {
+        log.debug("Executing raw Gremlin query for single result: {}", query);
+        
+        try {
+            List<Result> results = executeQuery(Collections.singletonList(query));
+            
+            if (results.isEmpty()) {
+                return null;
+            }
+            
+            // Return the first result's value
+            return results.get(0).getObject();
+        } catch (Exception e) {
+            log.error("Failed to execute query for object: {}", query, e);
+            throw new GremlinQueryException("Failed to execute query: " + query, e);
+        }
+    }
+
+    @Override
+    public List<Object> queryForList(@NonNull String query) {
+        log.debug("Executing raw Gremlin query for list results: {}", query);
+        
+        try {
+            List<Result> results = executeQuery(Collections.singletonList(query));
+            
+            return results.stream()
+                    .map(Result::getObject)
+                    .collect(toList());
+        } catch (Exception e) {
+            log.error("Failed to execute query for list: {}", query, e);
+            throw new GremlinQueryException("Failed to execute query: " + query, e);
+        }
+    }
+
+    @Override
+    public List<Object> queryForList(@NonNull String query, int offset, int limit) {
+        log.debug("Executing raw Gremlin query for paginated list results: {} (offset: {}, limit: {})", query, offset, limit);
+        
+        try {
+            // Add pagination to the query
+            String paginatedQuery = query + ".range(" + offset + "," + (offset + limit) + ")";
+            List<Result> results = executeQuery(Collections.singletonList(paginatedQuery));
+            
+            return results.stream()
+                    .map(Result::getObject)
+                    .collect(toList());
+        } catch (Exception e) {
+            log.error("Failed to execute paginated query for list: {}", query, e);
+            throw new GremlinQueryException("Failed to execute paginated query: " + query, e);
+        }
+    }
+
+    @Override
+    public Page<Object> queryForPage(@NonNull String query, @NonNull Pageable pageable) {
+        log.debug("Executing raw Gremlin query for page results: {} (page: {}, size: {})", 
+                 query, pageable.getPageNumber(), pageable.getPageSize());
+        
+        try {
+            int offset = (int) pageable.getOffset();
+            int limit = pageable.getPageSize();
+            
+            // Get the paginated results
+            List<Object> results = queryForList(query, offset, limit);
+            
+            // Get the total count by executing a count query
+            String countQuery = query.replaceAll("\\.valueMap\\(true\\)", ".count()")
+                                   .replaceAll("\\.range\\([^)]+\\)", "");
+            Object countResult = queryForObject(countQuery);
+            long totalCount = countResult instanceof Number ? ((Number) countResult).longValue() : 0;
+            
+            return new PageImpl<>(results, pageable, totalCount);
+        } catch (Exception e) {
+            log.error("Failed to execute query for page: {}", query, e);
+            throw new GremlinQueryException("Failed to execute query for page: " + query, e);
+        }
+    }
+
+    @Override
+    public <T> T queryForObject(@NonNull String query, @NonNull Class<T> requiredType) {
+        log.debug("Executing raw Gremlin query for single typed result: {} (type: {})", query, requiredType.getSimpleName());
+        
+        try {
+            List<Result> results = executeQuery(Collections.singletonList(query));
+            
+            if (results.isEmpty()) {
+                return null;
+            }
+            
+            Object result = results.get(0).getObject();
+            return convertToType(result, requiredType);
+        } catch (Exception e) {
+            log.error("Failed to execute typed query for object: {}", query, e);
+            throw new GremlinQueryException("Failed to execute typed query: " + query, e);
+        }
+    }
+
+    @Override
+    public <T> List<T> queryForList(@NonNull String query, @NonNull Class<T> requiredType) {
+        log.debug("Executing raw Gremlin query for typed list results: {} (type: {})", query, requiredType.getSimpleName());
+        
+        try {
+            List<Result> results = executeQuery(Collections.singletonList(query));
+            
+            return results.stream()
+                    .map(Result::getObject)
+                    .map(obj -> convertToType(obj, requiredType))
+                    .collect(toList());
+        } catch (Exception e) {
+            log.error("Failed to execute typed query for list: {}", query, e);
+            throw new GremlinQueryException("Failed to execute typed query: " + query, e);
+        }
+    }
+
+    @Override
+    public <T> List<T> queryForList(@NonNull String query, int offset, int limit, @NonNull Class<T> requiredType) {
+        log.debug("Executing raw Gremlin query for paginated typed list results: {} (offset: {}, limit: {}, type: {})", 
+                 query, offset, limit, requiredType.getSimpleName());
+        
+        try {
+            // Add pagination to the query
+            String paginatedQuery = query + ".range(" + offset + "," + (offset + limit) + ")";
+            List<Result> results = executeQuery(Collections.singletonList(paginatedQuery));
+            
+            return results.stream()
+                    .map(Result::getObject)
+                    .map(obj -> convertToType(obj, requiredType))
+                    .collect(toList());
+        } catch (Exception e) {
+            log.error("Failed to execute paginated typed query for list: {}", query, e);
+            throw new GremlinQueryException("Failed to execute paginated typed query: " + query, e);
+        }
+    }
+
+    @Override
+    public <T> Page<T> queryForPage(@NonNull String query, @NonNull Pageable pageable, @NonNull Class<T> requiredType) {
+        log.debug("Executing raw Gremlin query for typed page results: {} (page: {}, size: {}, type: {})", 
+                 query, pageable.getPageNumber(), pageable.getPageSize(), requiredType.getSimpleName());
+        
+        try {
+            int offset = (int) pageable.getOffset();
+            int limit = pageable.getPageSize();
+            
+            // Get the paginated results
+            List<T> results = queryForList(query, offset, limit, requiredType);
+            
+            // Get the total count by executing a count query
+            String countQuery = query.replaceAll("\\.valueMap\\(true\\)", ".count()")
+                                   .replaceAll("\\.range\\([^)]+\\)", "");
+            Object countResult = queryForObject(countQuery);
+            long totalCount = countResult instanceof Number ? ((Number) countResult).longValue() : 0;
+            
+            return new PageImpl<>(results, pageable, totalCount);
+        } catch (Exception e) {
+            log.error("Failed to execute typed query for page: {}", query, e);
+            throw new GremlinQueryException("Failed to execute typed query for page: " + query, e);
+        }
+    }
+
+    /**
+     * Convert an object to the specified type.
+     * 
+     * @param obj the object to convert
+     * @param requiredType the target type
+     * @param <T> the target type
+     * @return the converted object
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T convertToType(Object obj, Class<T> requiredType) {
+        if (obj == null) {
+            return null;
+        }
+        
+        // If already the correct type, return as is
+        if (requiredType.isInstance(obj)) {
+            return (T) obj;
+        }
+        
+        // Handle common type conversions
+        if (requiredType == Long.class) {
+            if (obj instanceof Number) {
+                return (T) Long.valueOf(((Number) obj).longValue());
+            } else if (obj instanceof String) {
+                return (T) Long.valueOf((String) obj);
+            }
+        } else if (requiredType == Integer.class) {
+            if (obj instanceof Number) {
+                return (T) Integer.valueOf(((Number) obj).intValue());
+            } else if (obj instanceof String) {
+                return (T) Integer.valueOf((String) obj);
+            }
+        } else if (requiredType == String.class) {
+            return (T) obj.toString();
+        } else if (requiredType == Double.class) {
+            if (obj instanceof Number) {
+                return (T) Double.valueOf(((Number) obj).doubleValue());
+            } else if (obj instanceof String) {
+                return (T) Double.valueOf((String) obj);
+            }
+        } else if (requiredType == Float.class) {
+            if (obj instanceof Number) {
+                return (T) Float.valueOf(((Number) obj).floatValue());
+            } else if (obj instanceof String) {
+                return (T) Float.valueOf((String) obj);
+            }
+        } else if (requiredType == Boolean.class) {
+            if (obj instanceof Boolean) {
+                return (T) obj;
+            } else if (obj instanceof String) {
+                return (T) Boolean.valueOf((String) obj);
+            }
+        }
+        
+        // If no specific conversion is available, try to cast
+        try {
+            return (T) obj;
+        } catch (ClassCastException e) {
+            throw new GremlinQueryException("Cannot convert object of type " + obj.getClass().getSimpleName() + 
+                                          " to " + requiredType.getSimpleName(), e);
+        }
     }
 }
 
