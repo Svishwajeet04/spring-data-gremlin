@@ -20,6 +20,8 @@ import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Slf4j
@@ -29,21 +31,53 @@ public abstract class AbstractGremlinSourceReader {
         final Class<?> type = property.getTypeInformation().getType();
         final JavaType javaType = TypeFactory.defaultInstance().constructType(property.getType());
 
+        log.debug("AbstractGremlinSourceReader.readProperty - Property: {}, Type: {}, Value: {} (class: {})", 
+                  property.getName(), type.getSimpleName(), value, value != null ? value.getClass().getSimpleName() : "null");
+
         if (value == null) {
+            log.debug("AbstractGremlinSourceReader.readProperty - Returning null for null value");
             return null;
         } else if (type == int.class || type == Integer.class
                 || type == Boolean.class || type == boolean.class
                 || type == String.class) {
+            log.debug("AbstractGremlinSourceReader.readProperty - Returning primitive/wrapper type: {}", value);
             return value;
         } else if (type == Date.class) {
             Assert.isTrue(value instanceof Long, "Date store value must be instance of long");
+            log.debug("AbstractGremlinSourceReader.readProperty - Converting Long to Date: {}", value);
             return new Date((Long) value);
+        } else if (type == LocalDateTime.class) {
+            log.debug("AbstractGremlinSourceReader.readProperty - Converting to LocalDateTime: {}", value);
+            if (value instanceof String) {
+                try {
+                    // Try parsing as ISO-8601 format first
+                    return LocalDateTime.parse((String) value);
+                } catch (Exception e) {
+                    log.warn("AbstractGremlinSourceReader.readProperty - Failed to parse LocalDateTime as ISO-8601, trying default format: {}", e.getMessage());
+                    try {
+                        // Try with default formatter
+                        return LocalDateTime.parse((String) value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    } catch (Exception e2) {
+                        log.error("AbstractGremlinSourceReader.readProperty - Failed to parse LocalDateTime string '{}': {}", value, e2.getMessage());
+                        throw new GremlinUnexpectedEntityTypeException("Failed to parse LocalDateTime: " + value, e2);
+                    }
+                }
+            } else {
+                log.error("AbstractGremlinSourceReader.readProperty - LocalDateTime value must be String, got: {}", value.getClass().getSimpleName());
+                throw new GremlinUnexpectedEntityTypeException("LocalDateTime value must be String, got: " + value.getClass().getSimpleName());
+            }
         } else {
+            log.debug("AbstractGremlinSourceReader.readProperty - Attempting to parse complex type: {} with value: {}", type.getSimpleName(), value);
             final Object object;
 
             try {
+                log.debug("AbstractGremlinSourceReader.readProperty - Calling ObjectMapper.readValue with value: '{}' and type: {}", value.toString(), javaType);
                 object = GremlinUtils.getObjectMapper().readValue(value.toString(), javaType);
+                log.debug("AbstractGremlinSourceReader.readProperty - Successfully parsed to: {}", object);
             } catch (IOException e) {
+                log.error("AbstractGremlinSourceReader.readProperty - Failed to parse value '{}' to type {}: {}", 
+                         value.toString(), type.getSimpleName(), e.getMessage());
+                log.error("AbstractGremlinSourceReader.readProperty - Full exception details:", e);
                 throw new GremlinUnexpectedEntityTypeException("Failed to read String to Object", e);
             }
 
