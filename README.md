@@ -14,20 +14,36 @@ We have **deprecated** Spring Data Gremlin. We recommend that you use the Tinker
 
 This project works with *any Gremlin-compatible* data store, and also with [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction). Cosmos is a globally-distributed database service that allows developers to work with data using a variety of standard APIs, such as Graph, MongoDB, and SQL. Spring Data Gremlin provides a delightful experience to interact with Azure Cosmos DB Graph API. 
 
-## Spring Data Version Support
-Version mapping between spring boot and spring-data-gremlin: 
+## What's New
 
-| Spring boot version                                         | spring-data-gremlin version                                                                                                                                                                                                                   |
-|:-----------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| ![version](https://img.shields.io/badge/version-2.3.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.3.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.3.*) |
-| ![version](https://img.shields.io/badge/version-2.2.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.2.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.2.*) |
-| ![version](https://img.shields.io/badge/version-2.1.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.1.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.1.*) |
-| ![version](https://img.shields.io/badge/version-2.0.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.0.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.0.*) |
+- **Major Upgrade**: Updated to Spring Framework 6.1.2 and Spring Data 3.2.1 (Spring Boot 3.x compatible)
+- **Java 17 Support**: Upgraded to Java 17 as the minimum required version
+- **Enhanced Query Support**: Added comprehensive raw Gremlin query execution capabilities:
+  - `queryForObject()` - Execute raw queries returning single results
+  - `queryForList()` - Execute raw queries returning lists with type conversion
+  - `queryForPage()` - Execute paginated raw queries with automatic count queries
+  - Support for offset/limit pagination in raw queries
+- **Build System Migration**: Migrated from Maven to Gradle build system
+- **Improved Performance**: Enhanced parallel query execution and better error handling
+- **Type Safety**: Added generic type support for query results with automatic conversion
+- **Backward Compatibility**: Maintained support for derived query methods (e.g., `findByAFieldAndBField`) and `@GremlinQuery` annotation
+
+## Spring Data Version Support
+Version mapping between Spring Boot and spring-data-gremlin: 
+
+| Spring Boot version                                         | Spring Data version | spring-data-gremlin version                                                                                                                                                                                                                   | Java Version |
+|:-----------------------------------------------------------:|:------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------:|
+| ![version](https://img.shields.io/badge/version-3.2.x-blue) | 3.2.1             | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.3.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.3.*) | 17+          |
+| ![version](https://img.shields.io/badge/version-2.3.x-blue) | 2.3.0             | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.3.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.3.*) | 8+           |
+| ![version](https://img.shields.io/badge/version-2.2.x-blue) | 2.2.0             | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.2.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.2.*) | 8+           |
+| ![version](https://img.shields.io/badge/version-2.1.x-blue) | 2.1.0             | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.1.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.1.*) | 8+           |
+| ![version](https://img.shields.io/badge/version-2.0.x-blue) | 2.0.0             | [![Maven Central](https://img.shields.io/maven-central/v/com.spring.data.gremlin/spring-data-gremlin/2.0.svg)](https://search.maven.org/search?q=g:com.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.0.*) | 8+           |
 
 ## TOC
 
 * [Welcome to Contribute](#welcome-to-contribute)
 * [Sample Code](#sample-code)
+* [What’s New](#whats-new)
 * [Spring data version support](#spring-data-version-support)
 * [Feature List](#feature-list)
 * [Quick Start](#quick-start)
@@ -41,8 +57,8 @@ Contribution is welcome. Please follow [this instruction](./CONTRIBUTING.md) to 
 ## Sample Code
 Please refer to [sample project here](./examples/example/).
 
-## Spring data version support
-This repository only supports Spring Data 2.x. 
+## Spring Data Version Support
+This repository now supports Spring Data 3.x (Spring Boot 3.x) with Java 17+ as the primary target, while maintaining backward compatibility with Spring Data 2.x for legacy applications. 
 
 ## Feature List
 - Spring Data CRUDRepository basic CRUD functionality
@@ -55,7 +71,7 @@ This repository only supports Spring Data 2.x.
   There're 2 ways to map a field in domain class to `id` field of a database entity.
   - annotate a field in domain class with `@Id` 
   - set name of this field to `id`
-- Default annotaion
+- Default annotation
   - ```@Vertex``` maps an ```Object``` to a ```Vertex```
   - ```@VertexSet``` maps a set of ```Vertex```
   - ```@Edge``` maps an ```Object``` to an ```Edge```
@@ -69,8 +85,20 @@ This repository only supports Spring Data 2.x.
   - ```<T> boolean isEmptyGraph(T object)```
   - ```long vertexCount()```
   - ```long edgeCount()```
-- Supports [Spring Data custom query](https://docs.spring.io/spring-data/commons/docs/current/reference/html/#repositories.query-methods.details) find operation, e.g.,  `findByAFieldAndBField`
-- Supports any class type in domain class including collection and nested type.
+- **Enhanced Query Support**:
+  - Supports [Spring Data custom query](https://docs.spring.io/spring-data/commons/docs/current/reference/html/#repositories.query-methods.details) find operation, e.g.,  `findByAFieldAndBField`
+  - Supports string-based queries on repository methods via `@GremlinQuery("g.V()...")` when you need full control over the Gremlin traversal
+  - **Raw Gremlin Query Execution**:
+    - `queryForObject(String query)` - Execute raw Gremlin queries returning single results
+    - `queryForList(String query, Class<T> type)` - Execute raw queries with type conversion
+    - `queryForPage(String query, Pageable pageable)` - Execute paginated raw queries
+    - `queryForList(String query, int offset, int limit, Class<T> type)` - Execute paginated queries with offset/limit
+- **Performance Improvements**:
+  - Parallel query execution for better performance
+  - Enhanced error handling and logging
+  - Automatic query optimization
+- Supports any class type in domain class including collection and nested type
+- **Java 17+ Support**: Full compatibility with modern Java features and Spring Boot 3.x
 
   
 
@@ -78,15 +106,30 @@ This repository only supports Spring Data 2.x.
 
 ### Add the dependency
 `spring-data-gremlin` is published on Maven Central Repository.  
-If you are using Maven, add the following dependency.  
+
+**Requirements:**
+- Java 17+ (for Spring Boot 3.x compatibility)
+- Spring Boot 3.2.x or Spring Framework 6.1.2+
+
+If you are using Gradle, add the following dependency to your `build.gradle` file.  
+
+```gradle
+dependencies {
+    implementation 'com.spring.data.gremlin:spring-data-gremlin:2.3.1-SNAPSHOT'
+}
+```
+
+If you are using Maven, add the following dependency to your `pom.xml` file.  
 
 ```xml
 <dependency>
     <groupId>com.spring.data.gremlin</groupId>
     <artifactId>spring-data-gremlin</artifactId>
-    <version>2.1.7</version>
+    <version>2.3.1-SNAPSHOT</version>
 </dependency>
 ```
+
+**Note:** This version requires Java 17+ and Spring Boot 3.x. For Java 8+ compatibility, use version 2.1.7.
 
 ### Setup Configuration
 Setup ```application.yml``` file.(Use Azure Cosmos DB Graph as an example.)
@@ -179,6 +222,52 @@ public interface PersonRepository extends GremlinRepository<Person, String> {
 
 `findByName` method is custom query method, it will find the person with the ```name``` property.
 
+### Raw Gremlin Query Support
+You can now execute raw Gremlin queries directly using the enhanced query support:
+
+```java
+@Repository
+public interface PersonRepository extends GremlinRepository<Person, String> {
+    List<Person> findByName(String name);
+    
+    // Raw Gremlin query with @GremlinQuery annotation
+    @GremlinQuery("g.V().has('name', :name).valueMap(true)")
+    List<Map<String, Object>> findPersonPropertiesByName(@Param("name") String name);
+}
+```
+
+Using GremlinTemplate for advanced queries:
+
+```java
+@Service
+public class PersonService {
+    
+    @Autowired
+    private GremlinTemplate gremlinTemplate;
+    
+    public List<Person> findPersonsWithComplexQuery() {
+        // Execute raw Gremlin query with type conversion
+        return gremlinTemplate.queryForList(
+            "g.V().hasLabel('person').has('age', gte(25)).valueMap(true)", 
+            Person.class
+        );
+    }
+    
+    public Page<Person> findPersonsPaginated(Pageable pageable) {
+        // Execute paginated raw Gremlin query
+        return gremlinTemplate.queryForPage(
+            "g.V().hasLabel('person').valueMap(true)", 
+            pageable
+        );
+    }
+    
+    public Object executeCustomQuery(String query) {
+        // Execute any raw Gremlin query
+        return gremlinTemplate.queryForObject(query);
+    }
+}
+```
+
 ### Create an Application class
 Here create an application class with all the components
 
@@ -205,6 +294,30 @@ public class SampleApplication implements CommandLineRunner {
 }
 ```
 Autowired UserRepository interface, then can do save, delete and find operations. Spring Data Azure Cosmos DB uses the DocumentTemplate to execute the queries behind *find*, *save* methods. You can use the template yourself for more complex queries.
+
+## Migration Guide
+
+### Upgrading from Spring Boot 2.x to 3.x
+
+If you're upgrading from Spring Boot 2.x to 3.x, follow these steps:
+
+1. **Update Java Version**: Ensure you're using Java 17 or higher
+2. **Update Dependencies**: Change your dependency version to `2.3.1-SNAPSHOT`
+3. **Update Build Configuration**: 
+   - For Gradle: Update to Gradle 7.0+ and use the new dependency syntax
+   - For Maven: Ensure you're using Maven 3.6.3+
+4. **Code Changes**: 
+   - Replace `javax.annotation` imports with `jakarta.annotation` if needed
+   - Update any deprecated Spring Data methods
+5. **Configuration**: Update your `application.yml` or `application.properties` for Spring Boot 3.x compatibility
+
+### New Features Available
+
+- **Raw Query Execution**: Use `GremlinTemplate.queryForObject()`, `queryForList()`, and `queryForPage()` for direct Gremlin query execution
+- **Enhanced Type Safety**: All query methods now support generic type parameters for better type safety
+- **Improved Performance**: Parallel query execution and better error handling
+- **Pagination Support**: Built-in pagination support for raw queries with automatic count queries
+
 ## Filing Issues
 
 If you encounter any bug, please file an issue [here](https://github.com/Microsoft/spring-data-gremlin/issues/new?template=custom.md).
