@@ -14,14 +14,14 @@ import com.spring.data.gremlin.common.domain.Person;
 import com.spring.data.gremlin.common.domain.Relationship;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.data.util.ClassTypeInformation;
+import org.springframework.data.util.TypeInformation;
 
 public class BasicGremlinPersistentEntityUnitTest {
 
     @Test
     public void testVertexPersistentEntity() {
         final BasicGremlinPersistentEntity<Person> entity =
-                new BasicGremlinPersistentEntity<>(ClassTypeInformation.from(Person.class));
+                new BasicGremlinPersistentEntity<>(TypeInformation.of(Person.class));
         final Vertex annotation = entity.findAnnotation(Vertex.class);
 
         Assert.assertEquals(entity.getType(), Person.class);
@@ -32,7 +32,7 @@ public class BasicGremlinPersistentEntityUnitTest {
     @Test
     public void testEdgePersistentEntity() {
         final BasicGremlinPersistentEntity<Relationship> entity =
-                new BasicGremlinPersistentEntity<>(ClassTypeInformation.from(Relationship.class));
+                new BasicGremlinPersistentEntity<>(TypeInformation.of(Relationship.class));
         final Edge annotation = entity.findAnnotation(Edge.class);
 
         Assert.assertEquals(entity.getType(), Relationship.class);
@@ -43,7 +43,7 @@ public class BasicGremlinPersistentEntityUnitTest {
     @Test
     public void testGraphPersistentEntity() {
         final BasicGremlinPersistentEntity<Network> entity =
-                new BasicGremlinPersistentEntity<>(ClassTypeInformation.from(Network.class));
+                new BasicGremlinPersistentEntity<>(TypeInformation.of(Network.class));
         final Graph annotation = entity.findAnnotation(Graph.class);
 
         Assert.assertEquals(entity.getType(), Network.class);

@@ -10,7 +10,7 @@ import com.spring.data.gremlin.common.TestConstants;
 import com.spring.data.gremlin.common.domain.Project;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.data.util.ClassTypeInformation;
+import org.springframework.data.util.TypeInformation;
 
 public class GremlinMappingContextUnitTest {
 
@@ -18,7 +18,7 @@ public class GremlinMappingContextUnitTest {
     public void testCreatePersistentProperty() {
         final GremlinMappingContext context = new GremlinMappingContext();
         final BasicGremlinPersistentEntity<Project> entity = context.createPersistentEntity(
-                ClassTypeInformation.from(Project.class));
+                TypeInformation.of(Project.class));
 
         Assert.assertNotNull(entity);
         Assert.assertNotNull(entity.findAnnotation(Vertex.class));

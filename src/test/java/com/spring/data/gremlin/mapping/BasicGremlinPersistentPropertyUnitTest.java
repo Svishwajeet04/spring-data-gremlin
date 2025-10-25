@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.data.mapping.model.Property;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
-import org.springframework.data.util.ClassTypeInformation;
+import org.springframework.data.util.TypeInformation;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -29,7 +29,7 @@ public class BasicGremlinPersistentPropertyUnitTest {
     @Test
     public void testVertexPersistentProperty() {
         final BasicGremlinPersistentEntity<Person> entity =
-                new BasicGremlinPersistentEntity<>(ClassTypeInformation.from(Person.class));
+                new BasicGremlinPersistentEntity<>(TypeInformation.of(Person.class));
         Field field = ReflectionUtils.findField(Person.class, TestConstants.PROPERTY_ID);
         BasicGremlinPersistentProperty property = this.createBasicGremlinPersistentProperty(entity, field);
 
@@ -48,7 +48,7 @@ public class BasicGremlinPersistentPropertyUnitTest {
     @Test
     public void testEdgePersistentProperty() {
         final BasicGremlinPersistentEntity<Relationship> entity =
-                new BasicGremlinPersistentEntity<>(ClassTypeInformation.from(Relationship.class));
+                new BasicGremlinPersistentEntity<>(TypeInformation.of(Relationship.class));
         Field field = ReflectionUtils.findField(Relationship.class, TestConstants.PROPERTY_ID);
         BasicGremlinPersistentProperty property = this.createBasicGremlinPersistentProperty(entity, field);
 
@@ -67,7 +67,7 @@ public class BasicGremlinPersistentPropertyUnitTest {
     @Test
     public void testGraphPersistentProperty() {
         final BasicGremlinPersistentEntity<Network> entity =
-                new BasicGremlinPersistentEntity<>(ClassTypeInformation.from(Network.class));
+                new BasicGremlinPersistentEntity<>(TypeInformation.of(Network.class));
         final Field field = ReflectionUtils.findField(Network.class, TestConstants.PROPERTY_ID);
         final BasicGremlinPersistentProperty property = this.createBasicGremlinPersistentProperty(entity, field);
 
